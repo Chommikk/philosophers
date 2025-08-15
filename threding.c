@@ -23,7 +23,7 @@ void	*precision_check(void *arg)
 		i++;
 	while (time < 200)
 	{
-		usleep(0);
+		usleep(1);
 		if (gettimeofday(&end, NULL) != 0)
 			return NULL; //error handle
 		time = (end.tv_sec - start.tv_sec) * 1000UL + (end.tv_usec - start.tv_usec) / 1000;

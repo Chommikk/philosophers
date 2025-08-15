@@ -1,11 +1,16 @@
-NAME = change
+NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 TFLAGS = -pthread
-LIBFT = libft/*.c
+LIBFT = libft/ft_atoi.c\
+		libft/ft_calloc.c\
+		libft/ft_isdigit.c\
+		libft/ft_itoa.c
+
 THREADING = threding.c
 TIME = time/print_time.c
-FILES = $(EXECFILES)
+FILES = main.c\
+		$(LIBFT)
 OBJ = $(FILES:.c=.o)
 
 

@@ -4,6 +4,7 @@ CFLAGS = -Wall -Wextra -Werror
 TFLAGS = -pthread
 LIBFT = libft/*.c
 THREADING = threding.c
+TIME = time/print_time.c
 FILES = $(EXECFILES)
 OBJ = $(FILES:.c=.o)
 
@@ -28,6 +29,9 @@ re : fclean all
 
 
 thr:
-	cc -Wall -Wextra $(TFLAGS) $(THREADING) $(LIBFT) -g -o exec
+	cc -Wall -Wextra $(TFLAGS) $(THREADING) $(LIBFT) -g -o ./hello
 
-.PHONY: re fclean clean all com star
+time:
+	cc -Wall -Wextra $(TIME) $(LIBFT) -g -o tm
+
+.PHONY: re fclean clean all com star time

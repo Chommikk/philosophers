@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 
+// threads wait until semafor == 1;
 typedef struct	s_data
 {
 	pthread_mutex_t	*lock;
@@ -23,11 +24,17 @@ typedef struct	s_data
 	struct timeval	start;
 }	t_data;
 
+//fork1 odd index
+//fork 2 even index
 typedef	struct	s_philo
 {
-	pthread_mutex_t	*fork;
+	pthread_mutex_t	*fork1;
+	pthread_mutex_t	*fork2;
 	size_t			name;
+	ssize_t			dont_eat;
 	struct timeval	ate;
+	struct timeval	start;
+	int				*semafor;
 }	t_philo;
 
 typedef struct	s_start
@@ -39,6 +46,11 @@ typedef struct	s_start
 	size_t	lifetime;
 }	t_start;
 
-
+typedef struct	s_arg
+{
+	t_start	*start;
+	t_philo	*philo;
+	t_data	*data;
+}	t_arg;
 
 #endif

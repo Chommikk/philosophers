@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 #include "../philosophers.h"
 #include "../utils/message.h"
+#include <sys/time.h>
+#include <stdio.h>
 
 void	sleep(t_philo *philo, t_start *info, t_data *data)
 {
@@ -30,17 +32,22 @@ void	sleep(t_philo *philo, t_start *info, t_data *data)
 	}
 }
 
-void	eat(t_philo *philo, t_start *info, t_data *data)
+void	eat_even(t_philo *philo, t_start *info, t_data *data)
 {
 	struct timeval	start;
 	struct timeval	end;
 	size_t			time;
 	
+	pthread_mutex_lock(philo->fork1);
+	pthread_mutex_lock(philo->fork2);
 	if (gettimeofday(&start, NULL) != 0)
 		return ; //error handle
-	print_eating(data, philo->name);
 	if (info->die < ((start.tv_sec - philo->ate.tv_sec) * 1000UL + (start.tv_usec - philo->ate.tv_usec) / 1000))
+	{
+		print_died(data, philo->name);
 		return ; //end thread philo died
+	}
+	print_eating(data, philo->name);
 	philo->ate = start;
 	while (time > info->eat)
 	{
@@ -48,4 +55,22 @@ void	eat(t_philo *philo, t_start *info, t_data *data)
 			return ; //error handle
 		time = (end.tv_sec - start.tv_sec) * 1000UL + (end.tv_usec - start.tv_usec) / 1000;
 	}
+	pthread_mutex_unlock(philo->fork1);
+	pthread_mutex_unlock(philo->fork2);
 }
+
+void	think(t_philo *philo, t_start *info, t_data *data)
+{
+	struct timeval	start;
+
+	if (gettimeofday(&start, NULL) != 0)
+		return ; //error handle
+	if (info->die < ((start.tv_sec - philo->ate.tv_sec) * 1000UL + (start.tv_usec - philo->ate.tv_usec) / 1000))
+	{
+		print_died(data, philo->name);
+		return ; //end thread philo died
+	}
+	print_thinking(data, philo->name);
+	usleep(0);
+}
+

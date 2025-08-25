@@ -30,11 +30,11 @@ typedef	struct	s_philo
 {
 	pthread_mutex_t	*fork1;
 	pthread_mutex_t	*fork2;
+	int				*semafor;
 	size_t			name;
-	ssize_t			dont_eat;
 	struct timeval	ate;
 	struct timeval	start;
-	int				*semafor;
+	ssize_t			dont_eat;
 }	t_philo;
 
 typedef struct	s_start
@@ -52,5 +52,10 @@ typedef struct	s_arg
 	t_philo	*philo;
 	t_data	*data;
 }	t_arg;
+
+void	philo_sleep(t_philo *philo, t_start *info);
+void	eat_even(t_philo *philo, t_start *info);
+void	think(t_philo *philo, t_start *info);
+void	even_philosophers(void *arg);
 
 #endif

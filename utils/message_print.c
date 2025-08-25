@@ -12,8 +12,9 @@
 #include "../philosophers.h"
 #include <stdio.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
-static unsigned long long	time_passed(t_data *data)
+static unsigned long long	time_passed(t_philo *data)
 {
 	struct timeval	end;
 	
@@ -24,42 +25,43 @@ static unsigned long long	time_passed(t_data *data)
 }
 
 
-void	print_eating(t_data *data, size_t num)
+void	print_eating(t_philo *data)
 {
 	unsigned long long	passed;
 
 	passed = time_passed(data);
-	printf("%llu %lu is eating\n", passed, num);
+	printf("%llu %lu is eating\n", passed, data->name);
 }
 
-void	print_fork(t_data *data, size_t num)
+void	print_fork(t_philo *data)
 {
 	unsigned long long	passed;
 
 	passed = time_passed(data);
-	printf("%llu %lu has taken a fork\n", passed, num);
+	printf("%llu %lu has taken a fork\n", passed, data->name);
 }
 
-void	print_sleeping(t_data *data, size_t num)
+void	print_sleeping(t_philo *data)
 {
 	unsigned long long	passed;
 
 	passed = time_passed(data);
-	printf("%llu %lu is sleeping\n", passed, num);
+	printf("%llu %lu is sleeping\n", passed, data->name);
 }
 
-void	print_thinking(t_data *data, size_t num)
+void	print_thinking(t_philo *data)
 {
 	unsigned long long	passed;
 
 	passed = time_passed(data);
-	printf("%llu %lu is thinking\n", passed, num);
+	printf("%llu %lu is thinking\n", passed, data->name);
 }
 
-void	print_died(t_data *data, size_t num)
+void	print_died(t_philo *data)
 {
 	unsigned long long	passed;
 
 	passed = time_passed(data);
-	printf("%llu %lu died\n", passed, num);
+	printf("%llu %lu died\n", passed, data->name);
+//	exit(1);
 }

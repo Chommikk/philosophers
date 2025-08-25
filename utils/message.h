@@ -16,9 +16,9 @@
 #include <stdio.h>
 #include "../philosophers.h"
 
-void	print_eating(t_data *data, size_t num);
-void	print_fork(t_data *data, size_t num);
-void	print_sleeping(t_data *data, size_t num);
-void	print_thinking(t_data *data, size_t num);
-void	print_died(t_data *data, size_t num);
+void	print_eating(t_philo *data);
+void	print_fork(t_philo *data);
+void	print_sleeping(t_philo *data);
+void	print_thinking(t_philo *data);
+void	print_died(t_philo *data);
 #endif

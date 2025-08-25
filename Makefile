@@ -10,6 +10,9 @@ LIBFT = libft/ft_atoi.c\
 THREADING = threding.c
 TIME = time/print_time.c
 FILES = main.c\
+		even.c\
+		actions/sleep.c\
+		utils/message_print.c\
 		$(LIBFT)
 OBJ = $(FILES:.c=.o)
 
@@ -39,4 +42,7 @@ thr:
 time:
 	cc -Wall -Wextra $(TIME) $(LIBFT) -g -o tm
 
-.PHONY: re fclean clean all com star time
+test:
+	cc -Wall -Wextra $(FILES) -g -o test
+
+.PHONY: re fclean clean all com star time test

@@ -33,9 +33,10 @@ int	main(int argc, char **argv)
 		return (1); //error message
 	initialize(&arguments, argc, argv);
 	
-	test_initialize(&arguments);
+	//test_initialize(&arguments);
 	
-
+	if (arguments.philosophers % 2 == 0)
+		even_philosophers(&arguments);
 }
 
 

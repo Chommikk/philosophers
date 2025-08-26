@@ -53,9 +53,9 @@ typedef struct	s_arg
 	t_data	*data;
 }	t_arg;
 
-void	philo_sleep(t_philo *philo, t_start *info);
-void	eat_even(t_philo *philo, t_start *info);
-void	think(t_philo *philo, t_start *info);
+int	philo_sleep(t_philo *philo, t_start *info);
+int	eat_even(t_philo *philo, t_start *info);
+int	think(t_philo *philo, t_start *info);
 void	even_philosophers(void *arg);
 
 #endif

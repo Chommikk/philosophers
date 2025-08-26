@@ -45,4 +45,6 @@ time:
 test:
 	cc -Wall -Wextra $(FILES) -g -o test
 
+opti:
+	cc -Wall -Wextra $(FILES) -g -O -o opti
 .PHONY: re fclean clean all com star time test

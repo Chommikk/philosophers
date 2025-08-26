@@ -114,8 +114,12 @@ void	initialize_philosophers_even(t_start *start, t_philo *sophers, pthread_mute
 		i ++;
 	}
 	semafor = 1;
-	while (1)
-		;
+	i = 0;
+	while (i < start->philosophers)
+	{
+		pthread_join(thread[i] , NULL);
+		i ++;
+	}
 }
 
 void	*philo_loop_even_eat(void *args)
@@ -134,9 +138,14 @@ void	*philo_loop_even_eat(void *args)
 		return NULL; //error handle
 	while(1)
 	{
-		eat_even(sopher, start);
-		philo_sleep(sopher, start);
-		think(sopher, start);
+		if (eat_even(sopher, start) == 0)
+			return (NULL);
+		if (philo_sleep(sopher, start) == 0)
+			return (NULL);
+		if (think(sopher, start) == 0)
+			return (NULL);
+		if (*sopher->semafor == 2)
+			return (NULL);
 		// printf("%lu philoname\n", sopher->name);
 	}
 }
@@ -155,13 +164,19 @@ void	*philo_loop_even_think(void *args)
 		return NULL; //error handle
 	if (gettimeofday(&sopher->ate, NULL) != 0)
 		return NULL; //error handle
+	usleep(0);
 	think(sopher, start);
 	usleep(10);
 	while(1)
 	{
-		eat_even(sopher, start);
-		philo_sleep(sopher, start);
-		think(sopher, start);
+		if (eat_even(sopher, start) == 0)
+			return (NULL);
+		if (philo_sleep(sopher, start) == 0)
+			return (NULL);
+		if (think(sopher, start) == 0)
+			return (NULL);
+		if (*sopher->semafor == 2)
+			return (NULL);
 		// printf("%lu philoname\n", sopher->name);
 	}
 }

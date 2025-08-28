@@ -11,7 +11,7 @@ THREADING = threding.c
 TIME = time/print_time.c
 FILES = main.c\
 		even.c\
-		actions/sleep.c\
+		actions/sleeptest.c\
 		utils/message_print.c\
 		$(LIBFT)
 OBJ = $(FILES:.c=.o)
@@ -25,7 +25,7 @@ $(NAME): $(OBJ)
 
 
 %.o : %.c libft.h
-	$(CC) $(CFLAGS) -c   $< -o $@
+	$(CC) $(CFLAGS) -c -O  $< -o $@
 	
 clean :
 	rm -f $(OBJ) $(BOBJ)
@@ -43,7 +43,7 @@ time:
 	cc -Wall -Wextra $(TIME) $(LIBFT) -g -o tm
 
 test:
-	cc -Wall -Wextra $(FILES) -g -o test
+	cc -Wall -Wextra $(FILES) -g -O -o test
 
 opti:
 	cc -Wall -Wextra $(FILES) -g -O -o opti

@@ -85,8 +85,22 @@ void	initialize_philosophers_else(t_start *start, t_philo *sophers, int *semafor
 	}
 }
 
-void	*philo_loop_even_eat(void *args);
-void	*philo_loop_even_think(void *args);
+int		destroy_mutexes(pthread_mutex_t *mut, t_start *start)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < start->philosophers)
+	{
+		pthread_mutex_destroy(mut + i);
+		i ++;
+	}
+	free(mut);
+	return (1);
+}
+
+void	*philo_loop_even_eat_immortal(void *args);
+void	*philo_loop_even_think_immortal(void *args);
 void	initialize_philosophers_even(t_start *start, t_philo *sophers, pthread_mutex_t *mut)
 {
 	int			semafor;
@@ -100,29 +114,35 @@ void	initialize_philosophers_even(t_start *start, t_philo *sophers, pthread_mute
 	i = 0;
 	initialize_philosophers_mutex(start, sophers, mut);
 	initialize_philosophers_else(start, sophers, &semafor);
+	args = malloc(sizeof (t_arg) * start->philosophers);
 	while (i < start->philosophers)
 	{
-		args = malloc(sizeof (t_arg));
-		if (args == NULL)
-			return ;//error
-		args->philo = sophers + i;
-		args->start = start;
+		(args + i)->philo = sophers + i;
+		(args + i)->start = start;
 		if (i % 2 == 1)
-			pthread_create(thread + i, NULL, philo_loop_even_eat, args);
+			pthread_create(thread + i, NULL, philo_loop_even_eat_immortal, args + i);
 		else 
-			pthread_create(thread + i, NULL, philo_loop_even_think, args);
+			pthread_create(thread + i, NULL, philo_loop_even_think_immortal, args + i);
 		i ++;
 	}
+	printf("%lu = amount created\n", i);
 	semafor = 1;
 	i = 0;
+	while (semafor != 2)
+		usleep(100);
 	while (i < start->philosophers)
 	{
-		pthread_join(thread[i] , NULL);
-		i ++;
+		printf("%i == return value of detach\n", pthread_detach(thread[i]));
+		printf("%lu i\n", i);
+		i++;
 	}
+	destroy_mutexes(mut, start);
+	free(thread);
+	free(sophers);
+	free(args);
 }
 
-void	*philo_loop_even_eat(void *args)
+void	*philo_loop_even_eat_immortal(void *args)
 {
 	t_philo	*sopher;
 	t_start	*start;
@@ -146,11 +166,10 @@ void	*philo_loop_even_eat(void *args)
 			return (NULL);
 		if (*sopher->semafor == 2)
 			return (NULL);
-		// printf("%lu philoname\n", sopher->name);
 	}
 }
 
-void	*philo_loop_even_think(void *args)
+void	*philo_loop_even_think_immortal(void *args)
 {
 	t_philo	*sopher;
 	t_start	*start;
@@ -164,9 +183,8 @@ void	*philo_loop_even_think(void *args)
 		return NULL; //error handle
 	if (gettimeofday(&sopher->ate, NULL) != 0)
 		return NULL; //error handle
-	usleep(0);
-	think(sopher, start);
-	usleep(10);
+	if (think(sopher, start) == 0 && usleep(100))
+		return (NULL);
 	while(1)
 	{
 		if (eat_even(sopher, start) == 0)
@@ -177,27 +195,63 @@ void	*philo_loop_even_think(void *args)
 			return (NULL);
 		if (*sopher->semafor == 2)
 			return (NULL);
-		// printf("%lu philoname\n", sopher->name);
 	}
 }
 
+void	*philo_loop_even_eat_mortal(void *args)
+{
+	t_philo	*sopher;
+	t_start	*start;
 
+	sopher = ((t_arg*) args)->philo;
+	start = ((t_arg*) args)->start;
+	while (sopher->semafor == 0)
+		usleep(1);
+	if (gettimeofday(&sopher->start, NULL) != 0)
+		return NULL; //error handle
+	if (gettimeofday(&sopher->ate, NULL) != 0)
+		return NULL; //error handle
+	while(1)
+	{
+		if (eat_even(sopher, start) == 0)
+			return (NULL);
+		if (sopher->lifetime !=  0)
+			sopher->lifetime --;
+		if (philo_sleep(sopher, start) == 0)
+			return (NULL);
+		if (think(sopher, start) == 0)
+			return (NULL);
+		if (*sopher->semafor == 2)
+			return (NULL);
+	}
+}
 
+void	*philo_loop_even_think_mortal(void *args)
+{
+	t_philo	*sopher;
+	t_start	*start;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	sopher = ((t_arg*) args)->philo;
+	start = ((t_arg*) args)->start;
+	while (sopher->semafor == 0)
+		usleep(1);
+	if (gettimeofday(&sopher->start, NULL) != 0)
+		return NULL; //error handle
+	if (gettimeofday(&sopher->ate, NULL) != 0)
+		return NULL; //error handle
+	if (think(sopher, start) == 0 && usleep(100))
+		return (NULL);
+	while(1)
+	{
+		if (eat_even(sopher, start) == 0)
+			return (NULL);
+		if (sopher->lifetime !=  0)
+			sopher->lifetime --;
+		if (philo_sleep(sopher, start) == 0)
+			return (NULL);
+		if (think(sopher, start) == 0)
+			return (NULL);
+		if (*sopher->semafor == 2)
+			return (NULL);
+	}
+}

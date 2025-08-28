@@ -34,7 +34,9 @@ typedef	struct	s_philo
 	size_t			name;
 	struct timeval	ate;
 	struct timeval	start;
+	struct timeval	last;
 	ssize_t			dont_eat;
+	size_t			lifetime;
 }	t_philo;
 
 typedef struct	s_start

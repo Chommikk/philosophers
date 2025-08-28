@@ -37,21 +37,19 @@ int	philo_sleep(t_philo *philo, t_start *info)
 	struct timeval	end;
 	size_t			time;
 	
-	if (gettimeofday(&start, NULL) != 0)
-		return (0);
-	usleep(10);
+	usleep(1);
 	if (death_check(philo, info) == 1)
 		return (0);
 	print_sleeping(philo);
 	if (gettimeofday(&end, NULL) != 0)
 		return (0); //error handle
-	time = (end.tv_sec - start.tv_sec) * 1000UL + (end.tv_usec - start.tv_usec) / 1000;
-	while (time < info->sleep)
+	time = (end.tv_sec - philo->ate.tv_sec) * 1000UL + (end.tv_usec - philo->ate.tv_usec) / 1000;
+	while (time < info->sleep - info->eat)
 	{
 		if (gettimeofday(&end, NULL) != 0)
 			return (0); //error handle
-		time = (end.tv_sec - start.tv_sec) * 1000UL + (end.tv_usec - start.tv_usec) / 1000;
-		usleep(10);
+		time = (end.tv_sec - philo->ate.tv_sec) * 1000UL + (end.tv_usec - philo->ate.tv_usec) / 1000;
+		usleep(1);
 	}
 	return (1);
 }

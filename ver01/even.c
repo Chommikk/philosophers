@@ -132,7 +132,7 @@ void	initialize_philosophers_even(t_start *start, t_philo *sophers, pthread_mute
 		usleep(100);
 	while (i < start->philosophers)
 	{
-		printf("%i == return value of detach\n", pthread_detach(thread[i]));
+		printf("%i == return value of detach\n", pthread_join(thread[i], NULL));
 		printf("%lu i\n", i);
 		i++;
 	}

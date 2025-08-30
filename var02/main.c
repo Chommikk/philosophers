@@ -6,7 +6,7 @@
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 20:15:01 by mchoma            #+#    #+#             */
-/*   Updated: 2025/08/29 21:35:25 by mchoma           ###   ########.fr       */
+/*   Updated: 2025/08/30 10:28:36 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ static void	fuck_norm(t_philo *sopher, t_start *start, pthread_mutex_t *mut, int
 {
 	if (i % 2 == 1)
 	{
-		sopher[i].fork1 = mut + i;
-		sopher[i].fork2 = mut + 1;
+		sopher[i].fork1 = mut + i + 1;
+		sopher[i].fork2 = mut + 2;
 	}
 	else
 	{
-		sopher[i].fork1 = mut + 1;
-		sopher[i].fork2 = mut + i;
+		sopher[i].fork1 = mut + 2;
+		sopher[i].fork2 = mut + i + 1;
 	}
 	sopher[i].print = mut;
 }
@@ -32,18 +32,18 @@ void	fill_philosophers_with_mutexes(t_philo *sopher, t_start *start, pthread_mut
 {
 	int	i;
 
-	i = 1;
+	i = 0;
 	while (i < start->philosophers)
 	{
 		if (i % 2 == 1)
 		{
-			sopher[i].fork1 = mut + i;
-			sopher[i].fork2 = mut + i + 1;
+			sopher[i].fork1 = mut + i + 1;
+			sopher[i].fork2 = mut + i + 2;
 		}
 		else
 		{
-			sopher[i].fork1 = mut + i + 1;
-			sopher[i].fork2 = mut + i;
+			sopher[i].fork1 = mut + i + 2;
+			sopher[i].fork2 = mut + i + 1;
 		}
 		sopher[i].print = mut;
 		i ++;
@@ -57,14 +57,15 @@ int	initialize_mutexes(t_philo *sopher, t_start *start, pthread_mutex_t *mut)
 
 	mut = ft_calloc(sizeof(pthread_mutex_t),start->philosophers + 1);
 	if (mut == NULL)
-		return (puterror("malloc failed\n"), 0);
+		return (free(sopher), puterror("malloc failed\n"), 0);
 	i = 0;
 	while (i <= start->philosophers)
 	{
 		if (pthread_mutex_init(mut + i, NULL))
-			return (puterror("failed to create mutex\n"), 0);
+			return (free(sopher), puterror("failed to create mutex\n"), 0);
 		i ++;
 	}
+	printf("%p to be freed\n", mut);
 	fill_philosophers_with_mutexes(sopher, start, mut);
 	return (1);
 }
@@ -87,7 +88,7 @@ t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, int *sema
 {
 	t_philo	*sopher;
 
-	sopher = ft_calloc(sizeof(t_philo), start->philosophers);
+	sopher = ft_calloc(sizeof(t_philo), start->philosophers + 1);
 	if (sopher == NULL)
 		return(puterror("malloc failed\n"), NULL);
 	if (initialize_mutexes(sopher, start, mut) == 0)
@@ -104,6 +105,9 @@ void	initialize_simulation(t_start *start)
 	int				semafor;
 
 	sopher = initialize_philosophers(start, mut, &semafor);
+	if (sopher == NULL)
+		return ;
+	printf("%p sopher->print110\n", sopher->print);
 	if (start->philosophers % 2 == 0)
 		even_philosophers(sopher, start);
 	else
@@ -145,5 +149,5 @@ int	main(int argc, char **argv)
 	if (initialize(&arguments, argc, argv) == 0)
 		return (0);
 
-	initialize_simulation(arguments);
+	initialize_simulation(&arguments);
 }

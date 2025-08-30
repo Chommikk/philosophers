@@ -82,7 +82,7 @@ int	eat_even(t_philo *philo, t_start *info)
 		if (gettimeofday(&end, NULL) != 0)
 			return (0); //error handle
 		time = (end.tv_sec - start.tv_sec) * 1000UL + (end.tv_usec - start.tv_usec) / 1000;
-		usleep(10);
+		usleep(0);
 	}
 	pthread_mutex_unlock(philo->fork1);
 	pthread_mutex_unlock(philo->fork2);
@@ -98,6 +98,6 @@ int	think(t_philo *philo, t_start *info)
 	if (death_check(philo, info) == 1)
 		return (0);
 	print_thinking(philo);
-	usleep(10);
+	usleep(0);
 	return (1);
 }

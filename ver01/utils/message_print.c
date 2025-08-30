@@ -74,6 +74,7 @@ size_t	philo_itoa(char *str, size_t num)
 
 void	print_eating(t_philo *data)
 {
+	static const char* x = "jgchgc";
 	unsigned long long	passed;
 	size_t				len;
 	size_t				offset;
@@ -84,6 +85,7 @@ void	print_eating(t_philo *data)
 	str[offset + len] = ' ';
 	len ++;
 	len = len + philo_itoa(str + offset + len, data->name);
+	*((size_t *)(str + offset)) = *((size_t *)(x));
 	str[len + offset + 1] = ' ';
 	str[len + offset + 2] = 'i';
 	str[len + offset + 3] = 's';

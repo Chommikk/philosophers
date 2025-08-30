@@ -125,17 +125,17 @@ void	initialize_philosophers_even(t_start *start, t_philo *sophers, pthread_mute
 			pthread_create(thread + i, NULL, philo_loop_even_think_immortal, args + i);
 		i ++;
 	}
-	printf("%lu = amount created\n", i);
+	// printf("%lu = amount created\n", i);
 	semafor = 1;
 	i = 0;
 	while (semafor != 2)
 		usleep(100);
-	while (i < start->philosophers)
-	{
-		printf("%i == return value of detach\n", pthread_join(thread[i], NULL));
-		printf("%lu i\n", i);
-		i++;
-	}
+	// while (i < start->philosophers)
+	// {
+	// 	printf("%i == return value of detach\n", pthread_join(thread[i], NULL));
+	// 	printf("%lu i\n", i);
+	// 	i++;
+	// }
 	destroy_mutexes(mut, start);
 	free(thread);
 	free(sophers);

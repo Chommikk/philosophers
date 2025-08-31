@@ -13,9 +13,49 @@
 #include "libft/libft.h"
 #include <sys/time.h>
 
+void	initialize_variables_in_thread(t_args *args, t_philo **sopher, t_start **start)
+{
+	*sopher = ((t_args *)args)->sopher;
+	*start = ((t_args *)args)->start;
+	free(args);
+}
+
+
+int	initialize_time(t_philo *sopher)
+{
+	sopher->start = get_time_in_size_t();
+	sopher->ate = get_time_in_size_t();
+}
+
+void	think(sopher, start)
+{
+
+}
+
+
 void	*even_think_immortal(void *args)
 {
-	return (NULL);
+	t_philo	*sopher;
+	t_start	*start;
+
+	initialize_variables_in_thread(args, &sopher, &start);
+	while(sopher->semafor == 0)
+		usleep(10);
+	initialize_time(sopher);
+	usleep(100);
+	think(sopher, start);
+	while(1)
+	{
+		even_immortal_eat(sopher, start);
+		if (*sopher->semafor == 2)
+			return (NULL);
+		sopher_sleep(sopher, start);
+		if (*sopher->semafor == 2)
+			return (NULL);
+		think(sopher,start);
+		if (*sopher->semafor == 2)
+			return (NULL);
+	}
 }
 
 void	*even_think_mortal(void *args)
@@ -45,20 +85,17 @@ int		even_start_threads_mortal(t_philo *sopher, t_start *start)
 		args = fill(sopher + i, start);
 		if (args == NULL)
 			return (free(thread), puterror("malloc failed\n"), 0);
-		/*
 		if(i % 2 == 0)
-		
 			if (pthread_create(thread + 1,NULL, even_eat_mortal, args) != 0)
 				return(free(args), puterror("error thread canno't be created\n"), 0);
 		if (i % 2 == 1)
 			if (pthread_create(thread + 1,NULL, even_think_mortal, args) != 0)
 				return(free(args), puterror("error thread can not be created\n"), 0);
-		*/
-		free(args);
 		i ++;
 	}
 	return (1);
 }
+
 int		even_start_threads_immortal(t_philo *sopher, t_start *start)
 {
 	int	i;
@@ -74,15 +111,12 @@ int		even_start_threads_immortal(t_philo *sopher, t_start *start)
 		args = fill(sopher + i, start);
 		if (args == NULL)
 			return (puterror("malloc failed\n"), 0);
-		/*
 		if(i % 2 == 0)
 			if (pthread_create(thread + 1,NULL, even_eat_immortal, args) != 0)
 				return(free(args), puterror("error thread canno't be created\n"), 0);
 		if (i % 2 == 1)
 			if (pthread_create(thread + 1,NULL, even_think_immortal, args) != 0)
 				return(free(args), puterror("error thread can not be created\n"), 0);
-		*/
-		free(args);
 		i ++;
 	}
 	return (1);
@@ -103,6 +137,16 @@ void	even_mortal(t_philo *sopher, t_start *start)
 }
 
 size_t	get_time_from_start(t_philo *sopher)
+{
+	struct timeval	t;
+	size_t			i;
+
+	gettimeofday(&t, NULL);
+	i = t.tv_sec * 1000 + t.tv_usec / 1000;
+	return (i - sopher->start);
+}
+
+size_t	get_time_in_size_t(void)
 {
 	struct timeval	t;
 	size_t			i;
@@ -134,10 +178,10 @@ void	even_philosophers(t_philo *sopher, t_start *start)
 		time = get_time_from_start(sopher);
 		while(i < start->philosophers)
 		{
-			if (sopher[i].ate + start->eat < i)
+			if (sopher[i].ate + start->eat < time)
 				philo_died(sopher + i, time);
-
+			i++;
 		}
-
 	}
 }
+

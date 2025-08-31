@@ -48,4 +48,6 @@ void	even_philosophers(t_philo *sopher, t_start *start);
 void	print_died(t_philo *data, size_t passed);
 void	odd_philosophers(t_philo *sopher, t_start *start);
 t_args	*fill(t_philo *sopher, t_start *start);
+size_t	get_time_in_size_t(void);
+size_t	get_time_from_start(t_philo *sopher);
 #endif

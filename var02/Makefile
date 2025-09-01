@@ -12,6 +12,8 @@ LIBFT = libft/ft_atoi.c\
 FILES = main.c\
 		even.c\
 		odd.c\
+		util.c\
+		actions.c\
 		$(LIBFT)
 OBJ = $(FILES:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 20:13:39 by mchoma            #+#    #+#             */
-/*   Updated: 2025/08/30 09:57:16 by mchoma           ###   ########.fr       */
+/*   Updated: 2025/08/31 21:41:50 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ typedef struct	s_philo
 	pthread_mutex_t	*print;
 	int				name;
 	int				*semafor;
-	int				lifetime;
-	size_t			start;
+	char			lifetime;
+	size_t			*start;
 	size_t			ate;
 	size_t			last;
 }	t_philo;
@@ -44,10 +44,23 @@ typedef struct	s_args
 	t_start	*start;
 }	t_args;
 
+void	philo_died(t_philo *sopher, size_t time);
+size_t	get_time_from_start(t_philo *sopher);
 void	even_philosophers(t_philo *sopher, t_start *start);
 void	print_died(t_philo *data, size_t passed);
+void	print_think(t_philo *data, size_t passed);
+void	print_eat(t_philo *data, size_t passed);
+void	print_sleep(t_philo *data, size_t passed);
+void	print_fork(t_philo *data, size_t passed);
 void	odd_philosophers(t_philo *sopher, t_start *start);
 t_args	*fill(t_philo *sopher, t_start *start);
 size_t	get_time_in_size_t(void);
 size_t	get_time_from_start(t_philo *sopher);
+int		death_check(t_philo *sopher, t_start *start);
+void	even_immortal_eat(t_philo *sopher, t_start *start);
+void	philo_sleep(t_philo *sopher, t_start *start);
+void	think(t_philo *sopher, t_start *start);
+
+void	even_immortal(t_philo *sopher, t_start *start);
+void	even_mortal(t_philo *sopher, t_start *start);
 #endif

@@ -130,6 +130,11 @@ void	initialize_philosophers_even(t_start *start, t_philo *sophers, pthread_mute
 	i = 0;
 	while (semafor != 2)
 		usleep(100);
+	while (i < start->philosophers)
+	{
+		pthread_join(thread[i], NULL);
+		i++;
+	}
 	// while (i < start->philosophers)
 	// {
 	// 	printf("%i == return value of detach\n", pthread_join(thread[i], NULL));

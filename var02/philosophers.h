@@ -6,7 +6,7 @@
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 20:13:39 by mchoma            #+#    #+#             */
-/*   Updated: 2025/08/31 21:41:50 by mchoma           ###   ########.fr       */
+/*   Updated: 2025/09/02 13:21:34 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ typedef struct	s_philo
 	pthread_mutex_t	*print;
 	int				name;
 	int				*semafor;
-	char			lifetime;
+	int				lifetime;
+	char			*flag;
 	size_t			*start;
 	size_t			ate;
 	size_t			last;
@@ -44,6 +45,11 @@ typedef struct	s_args
 	t_start	*start;
 }	t_args;
 
+void	even_mortal(t_philo *sopher, t_start *start);
+void	initialize_simulation(t_start *start);
+void	even_mortal_eat(t_philo *sopher, t_start *start);
+void	*even_eat_mortal(void *args);
+void	initialize_variables_in_thread(t_args *args, t_philo **sopher, t_start **start);
 void	philo_died(t_philo *sopher, size_t time);
 size_t	get_time_from_start(t_philo *sopher);
 void	even_philosophers(t_philo *sopher, t_start *start);

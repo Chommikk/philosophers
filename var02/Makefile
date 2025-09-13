@@ -7,13 +7,16 @@ LIBFT = libft/ft_atoi.c\
 		libft/ft_isdigit.c\
 		libft/ft_itoa.c\
 		libft/puterror.c\
-		libft/ft_strlen.c
+		libft/ft_strlen.c\
+		libft/ft_bzero.c\
+		libft/ft_memset.c
 
 FILES = main.c\
 		even.c\
 		odd.c\
 		util.c\
 		actions.c\
+		evenmortal.c\
 		$(LIBFT)
 OBJ = $(FILES:.c=.o)
 

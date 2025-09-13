@@ -70,7 +70,7 @@ int	initialize_mutexes(t_philo *sopher, t_start *start, pthread_mutex_t *mut)
 	return (1);
 }
 
-void	fill_philosophers(t_philo *sopher, t_start *start, int *semafor, size_t *strt)
+void	fill_philosophers(t_philo *sopher, t_start *start, int *semafor, size_t *strt, char *flag)
 {
 	int		i;
 
@@ -82,11 +82,13 @@ void	fill_philosophers(t_philo *sopher, t_start *start, int *semafor, size_t *st
 		sopher[i].semafor = semafor;
 		sopher[i].start = strt;
 		sopher[i].ate = 0;
+		sopher[i].flag = flag + i;
+		flag[i] = 1;
 		i ++;
 	}
 }
 
-t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, int *semafor, size_t *strt)
+t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, int *semafor, size_t *strt, char *flag)
 {
 	t_philo	*sopher;
 
@@ -95,7 +97,7 @@ t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, int *sema
 		return(puterror("malloc failed\n"), NULL);
 	if (initialize_mutexes(sopher, start, mut) == 0)
 		return (NULL);
-	fill_philosophers(sopher, start, semafor, strt);
+	fill_philosophers(sopher, start, semafor, strt, flag);
 	return (sopher);
 }
 
@@ -106,10 +108,13 @@ void	initialize_simulation(t_start *start)
 	pthread_mutex_t	*mut;
 	int				semafor;
 	size_t			strt;
-
+	char			flag[1048];
+	
+	
+	ft_memset(flag, 0, 1048);
 	mut = NULL;
 	semafor = 0;
-	sopher = initialize_philosophers(start, mut, &semafor, &strt);
+	sopher = initialize_philosophers(start, mut, &semafor, &strt, flag);
 	if (sopher == NULL)
 		return ;
 	// printf("%p sopher->print110\n", sopher->print);

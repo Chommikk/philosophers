@@ -13,16 +13,16 @@
 #include "philosophers.h"
 #include "libft/libft.h"
 
-static void	fuck_norm(t_philo *sopher, t_start *start, pthread_mutex_t *mut, int i)
+static void	fuck_norm(t_philo *sopher, pthread_mutex_t *mut, int i)
 {
 	if (i % 2 == 1)
 	{
 		sopher[i].fork1 = mut + i + 1;
-		sopher[i].fork2 = mut + 2;
+		sopher[i].fork2 = mut + 1;
 	}
 	else
 	{
-		sopher[i].fork1 = mut + 2;
+		sopher[i].fork1 = mut + 1;
 		sopher[i].fork2 = mut + i + 1;
 	}
 	sopher[i].print = mut;
@@ -33,7 +33,7 @@ void	fill_philosophers_with_mutexes(t_philo *sopher, t_start *start, pthread_mut
 	int	i;
 
 	i = 0;
-	while (i < start->philosophers)
+	while (i < start->philosophers - 1)
 	{
 		if (i % 2 == 1)
 		{
@@ -48,14 +48,14 @@ void	fill_philosophers_with_mutexes(t_philo *sopher, t_start *start, pthread_mut
 		sopher[i].print = mut;
 		i ++;
 	}
-	fuck_norm(sopher, start, mut, i);
+	fuck_norm(sopher, mut, i);
 }
 
 int	initialize_mutexes(t_philo *sopher, t_start *start, pthread_mutex_t *mut)
 {
 	int		i;
 
-	mut = ft_calloc(sizeof(pthread_mutex_t),start->philosophers + 2);
+	mut = ft_calloc(sizeof(pthread_mutex_t),start->philosophers + 1);
 	if (mut == NULL)
 		return (free(sopher), puterror("malloc failed\n"), 0);
 	i = 0;
@@ -123,6 +123,8 @@ void	initialize_simulation(t_start *start)
 			even_immortal(sopher, start);
 		else
 			even_mortal(sopher, start);
+	// else if (start->philosophers == 1)
+		// one_philosopher()
 	else
 		odd_philosophers(sopher, start);
 }

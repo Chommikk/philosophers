@@ -22,9 +22,11 @@ void	odd_immortal_eat(t_philo *sopher, t_start *start)
 	
 	if (sopher-> que == 0)
 	{
-		sopher->que = start->philosophers / 2;
-		usleep(2000 * (start->eat + start->sleep));
+		sopher->que = start->philosophers - 1;
+		usleep(1000 * (start->eat));
 	}
+	else
+		sopher->que --;
 	pthread_mutex_lock(sopher->fork1);
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
@@ -54,9 +56,11 @@ void	odd_mortal_eat(t_philo *sopher, t_start *start)
 	
 	if (sopher-> que == 0)
 	{
-		sopher->que = start->philosophers / 2;
-		usleep(2000 * (start->eat + start->sleep));
+		sopher->que = start->philosophers - 1;
+		usleep(1000 * (start->eat));
 	}
+	else
+		sopher->que --;
 	pthread_mutex_lock(sopher->fork1);
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
@@ -92,8 +96,6 @@ void	*odd_eat_immortal(void *args)
 	free(args);
 	while(*sopher->semafor == 0)
 		usleep(10);
-	usleep(100);
-	think(sopher, start);
 	while(1)
 	{
 		odd_immortal_eat(sopher, start);
@@ -113,8 +115,6 @@ void	*odd_eat_mortal(void *args)
 	free(args);
 	while(*sopher->semafor == 0)
 		usleep(10);
-	usleep(100);
-	think(sopher, start);
 	while(1)
 	{
 		odd_mortal_eat(sopher, start);
@@ -138,7 +138,7 @@ void	*odd_think_mortal(void *args)
 	think(sopher, start);
 	while(1)
 	{
-		even_mortal_eat(sopher, start);
+		odd_mortal_eat(sopher, start);
 		philo_sleep(sopher, start);
 		think(sopher,start);
 		if (*sopher->semafor == 2)
@@ -159,7 +159,7 @@ void	*odd_think_immortal(void *args)
 	think(sopher, start);
 	while(1)
 	{
-		even_immortal_eat(sopher, start);
+		odd_immortal_eat(sopher, start);
 		philo_sleep(sopher, start);
 		think(sopher,start);
 		if (*sopher->semafor == 2)

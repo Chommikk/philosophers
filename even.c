@@ -146,7 +146,7 @@ void	even_philosophers_immortal(t_philo *sopher, t_start *start)
 	{
 		i = 0;
 		// printf("in the loop\n");
-	time = get_time_from_start(sopher);
+		time = get_time_from_start(sopher);
 		// printf("%lu == time\n", time);
 		while(i < start->philosophers)
 		{

@@ -37,6 +37,7 @@ typedef struct	s_philo
 	size_t			*start;
 	size_t			ate;
 	size_t			last;
+	size_t			que;
 }	t_philo;
 
 typedef struct	s_args
@@ -45,10 +46,13 @@ typedef struct	s_args
 	t_start	*start;
 }	t_args;
 
+void	even_philosophers_immortal(t_philo *sopher, t_start *start);
+void	odd_philosophers(t_philo *sopher, t_start *start);
 void	even_mortal(t_philo *sopher, t_start *start);
 void	initialize_simulation(t_start *start);
 void	even_mortal_eat(t_philo *sopher, t_start *start);
 void	*even_eat_mortal(void *args);
+void	*monitoring(void *args);
 void	initialize_variables_in_thread(t_args *args, t_philo **sopher, t_start **start);
 void	philo_died(t_philo *sopher, size_t time);
 size_t	get_time_from_start(t_philo *sopher);

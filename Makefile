@@ -9,6 +9,8 @@ LIBFT = libft/ft_atoi.c\
 		libft/puterror.c\
 		libft/ft_strlen.c\
 		libft/ft_bzero.c\
+		libft/ft_putstr_fd.c\
+		libft/ft_putnbr_fd.c\
 		libft/ft_memset.c
 
 FILES = main.c\

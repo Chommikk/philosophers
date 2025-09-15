@@ -84,7 +84,7 @@ pthread_t	*even_start_threads_immortal(t_philo *sopher, t_start *start)
 	return (thread);
 }
 
-void	even_philosophers_immortal(t_philo *sopher, t_start *start);
+void	philosophers_immortal(t_philo *sopher, t_start *start);
 
 void	even_immortal(t_philo *sopher, t_start *start)
 {
@@ -94,7 +94,7 @@ void	even_immortal(t_philo *sopher, t_start *start)
 	thread = even_start_threads_immortal(sopher, start);
 	if (thread == NULL)
 		return (free(sopher->print), free(sopher));
-	even_philosophers_immortal(sopher, start);
+	philosophers_immortal(sopher, start);
 	i = 0;
 	while (i < start->philosophers)
 	{
@@ -133,7 +133,7 @@ void	philo_died(t_philo *sopher, size_t time)
 	print_died(sopher, time);
 }
 
-void	even_philosophers_immortal(t_philo *sopher, t_start *start)
+void	philosophers_immortal(t_philo *sopher, t_start *start)
 {
 	int		i;
 	size_t	time;
@@ -147,11 +147,20 @@ void	even_philosophers_immortal(t_philo *sopher, t_start *start)
 		i = 0;
 		// printf("in the loop\n");
 		time = get_time_from_start(sopher);
-		// printf("%lu == time\n", time);
 		while(i < start->philosophers)
 		{
-			if (sopher->ate + start->die < time)
+
+				// fprintf(stderr,"time == %lu\n", time);
+				// fprintf(stderr,"sopher ate[%i] == %lu\n", i, sopher->ate);
+				// fprintf(stderr,"start die[%i] == %i\n", i, start->die);
+				// fprintf(stderr,"sum == %lu\n", sopher->ate + start->die);
+
+			if (sopher[i].ate + start->die < time)
+			{
+				
+				// printf("timeofdeath == %lu\n", time);
 				philo_died(sopher + i, time);
+			}
 			i++;
 		}
 	}

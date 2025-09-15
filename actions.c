@@ -69,7 +69,7 @@ void	even_mortal_eat(t_philo *sopher, t_start *start)
 	sopher->lifetime --;
 	if (sopher->lifetime == 0)
 		*sopher->flag = 0;
-	// usleep(start->eat - (start->eat / 4));
+	usleep(start->eat - (start->eat / 4));
 	while ((size_t)start->eat > (get_time_from_start(sopher) - i))
 		usleep(10);
 	pthread_mutex_unlock(sopher->fork1);

@@ -46,7 +46,7 @@ typedef struct	s_args
 	t_start	*start;
 }	t_args;
 
-void	even_philosophers_immortal(t_philo *sopher, t_start *start);
+void	philosophers_immortal(t_philo *sopher, t_start *start);
 void	odd_philosophers(t_philo *sopher, t_start *start);
 void	even_mortal(t_philo *sopher, t_start *start);
 void	initialize_simulation(t_start *start);

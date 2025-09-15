@@ -78,6 +78,7 @@ void	fill_philosophers(t_philo *sopher, t_start *start, int *semafor, size_t *st
 	while(i < start->philosophers)
 	{
 		sopher[i].name = i + 1;
+		sopher[i].que = i;
 		sopher[i].lifetime = start->lifetime;
 		sopher[i].semafor = semafor;
 		sopher[i].start = strt;

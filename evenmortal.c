@@ -79,18 +79,22 @@ void	*monitoring(void *args)
 		while (i < start->philosophers)
 		{
 			//write(1,"hello",5);
-			// printf("arr[%i] == %i\n", i, arr[i]);
+			printf("arr[%i] == %i\n", i, arr[i]);
 			if (arr[i] !=0)
 				break;
-			i = i + 1;
+			i++;
 		}
 		if (i == start->philosophers)
 		{
 			*sopher->semafor = 2;
 			return (NULL);
 		}
+		printf("%i sopher semafor\n", *sopher->semafor);
 		if (*sopher->semafor == 2)
+		{
+			printf("Returned\n");
 			return (NULL);
+		}
 		// usleep(100);
 	}
 }

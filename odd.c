@@ -22,6 +22,8 @@ void	odd_immortal_eat(t_philo *sopher, t_start *start)
 	
 	if (sopher-> que == 0)
 	{
+		ft_putnbr_fd(sopher->name, 1);
+		ft_putstr_fd(" waiting\n", 1);
 		sopher->que = start->philosophers - 1;
 		usleep(1000 * (start->eat));
 	}
@@ -56,17 +58,21 @@ void	odd_mortal_eat(t_philo *sopher, t_start *start)
 	
 	if (sopher-> que == 0)
 	{
+		ft_putnbr_fd(sopher->name, 1);
+		ft_putstr_fd("waiting\n", 1);
 		sopher->que = start->philosophers - 1;
 		usleep(1000 * (start->eat));
 	}
 	else
 		sopher->que --;
 	pthread_mutex_lock(sopher->fork1);
+	// printf("locked fork 1\n");
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
 		philo_died(sopher, i);
 	print_fork(sopher, i);
 	pthread_mutex_lock(sopher->fork2);
+	// printf("locked fork 2\n");
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
 	{
@@ -167,23 +173,73 @@ void	*odd_think_immortal(void *args)
 	}
 }
 
+void	*odd_wait_immortal(void *args)
+{
+	t_philo	*sopher;
+	t_start	*start;
+
+	initialize_variables_in_thread(args, &sopher, &start);
+	free(args);
+	while(*sopher->semafor == 0)
+		usleep(10);
+	usleep(start->eat * 2000);
+	think(sopher, start);
+	while(1)
+	{
+		odd_immortal_eat(sopher, start);
+		philo_sleep(sopher, start);
+		think(sopher,start);
+		if (*sopher->semafor == 2)
+			return (NULL);
+	}
+}
+
+void	*odd_wait_mortal(void *args)
+{
+	t_philo	*sopher;
+	t_start	*start;
+
+	initialize_variables_in_thread(args, &sopher, &start);
+	free(args);
+	while(*sopher->semafor == 0)
+		usleep(10);
+	usleep(start->eat * 2000);
+	think(sopher, start);
+	while(1)
+	{
+		odd_mortal_eat(sopher, start);
+		philo_sleep(sopher, start);
+		think(sopher,start);
+		if (*sopher->semafor == 2)
+			return (NULL);
+	}
+}
+
+
 pthread_t	*odd_start_threads_mortal(t_philo *sopher, t_start *start)
 {
 	int			i;
 	pthread_t	*thread;
 	t_args		*args;
 
-	thread = ft_calloc(sizeof(pthread_t), start->philosophers + 2);
+	thread = ft_calloc(sizeof(pthread_t), start->philosophers + 1);
 	i = 0;
 	while(i  < start->philosophers)
 	{
 		args = fill(sopher + i, start);
 		if (args == NULL)
 			return (free(thread), puterror("malloc failed\n"), NULL);
-		if(i % 2 == 0)
+		if (i == 0)
+		{
+			if (pthread_create(thread + i,NULL, odd_wait_mortal, args) != 0)
+				return(puterror("error thread canno't be created\n"), NULL);
+		}
+		else if(i % 2 == 0)
+		{
 			if (pthread_create(thread + i,NULL, odd_eat_mortal, args) != 0)
 				return(puterror("error thread canno't be created\n"), NULL);
-		if (i % 2 == 1)
+		}
+		else if (i % 2 == 1)
 			if (pthread_create(thread + i,NULL, odd_think_mortal, args) != 0)
 				return(puterror("error thread can not be created\n"), NULL);
 		i ++;
@@ -212,10 +268,10 @@ pthread_t	*odd_start_threads_immortal(t_philo *sopher, t_start *start)
 		if (args == NULL)
 			return (free(thread), puterror("malloc failed\n"), NULL);
 		if(i % 2 == 0)
-			if (pthread_create(thread + 1,NULL, odd_eat_immortal, args) != 0)
+			if (pthread_create(thread + i,NULL, odd_eat_immortal, args) != 0)
 				return(free(args), puterror("error thread canno't be created\n"), NULL);
 		if (i % 2 == 1)
-			if (pthread_create(thread + 1,NULL, odd_think_immortal, args) != 0)
+			if (pthread_create(thread + i,NULL, odd_think_immortal, args) != 0)
 				return(free(args), puterror("error thread can not be created\n"), NULL);
 		i ++;
 	}
@@ -230,7 +286,7 @@ void	odd_immortal(t_philo *sopher, t_start *start)
 	thread = odd_start_threads_immortal(sopher, start);
 	if (thread == NULL)
 		return (free(sopher->print), free(sopher));
-	even_philosophers_immortal(sopher, start);
+	philosophers_immortal(sopher, start);
 	i = 0;
 	while (i < start->philosophers)
 	{
@@ -251,7 +307,7 @@ void	odd_mortal(t_philo *sopher, t_start *start)
 	thread = odd_start_threads_mortal(sopher, start);
 	if (thread == NULL)
 		return (free(sopher->print), free(sopher));
-	even_philosophers_immortal(sopher, start);
+	philosophers_immortal(sopher, start);
 	i = 0;
 	while (i <= start->philosophers)
 	{
@@ -263,9 +319,33 @@ void	odd_mortal(t_philo *sopher, t_start *start)
 	free(sopher);
 	exit(0);
 }
+/*
+void *one(void *args)
+{
+	
+}
 
+void	one_philosopher(t_philo *sopher, t_start *start)
+{
+	pthread_t	thread[1];
+	int			i;
+
+	
+	i = 0;
+	while (i <= start->philosophers)
+	{
+		pthread_join(thread[i], NULL);
+		i ++;
+	}
+	free(sopher->print);
+	free(sopher);
+	exit(0);
+}
+*/
 void	odd_philosophers(t_philo *sopher, t_start *start)
 {
+	// if (start->philosophers == 1)
+		// one_philosopher(sopher, start);
 	if (sopher->lifetime == -1)
 		odd_immortal(sopher, start);
 	else

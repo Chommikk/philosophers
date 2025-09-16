@@ -18,21 +18,32 @@ void	odd_immortal_eat(t_philo *sopher, t_start *start);
 
 void	odd_immortal_eat(t_philo *sopher, t_start *start)
 {
-	size_t	i;
+	atomic_size_t	i;
 	
 	if (sopher-> que == 0)
 	{
-		ft_putnbr_fd(sopher->name, 1);
-		ft_putstr_fd(" waiting\n", 1);
+		// pthread_mutex_lock(sopher->print);
+		// ft_putnbr_fd(sopher->name, 1);
+		// ft_putstr_fd(" waiting\n", 1);
+		// pthread_mutex_unlock(sopher->print);
 		sopher->que = start->philosophers - 1;
 		usleep(1000 * (start->eat));
+	}
+	else if (sopher-> que == 1 || sopher->que == (size_t)start->philosophers - 1)
+	{
+		usleep(500);
+		sopher->que --;
 	}
 	else
 		sopher->que --;
 	pthread_mutex_lock(sopher->fork1);
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
+	{
+		pthread_mutex_unlock(sopher->fork1);
 		philo_died(sopher, i);
+		return ;
+	}
 	print_fork(sopher, i);
 	pthread_mutex_lock(sopher->fork2);
 	i = get_time_from_start(sopher);
@@ -41,6 +52,7 @@ void	odd_immortal_eat(t_philo *sopher, t_start *start)
 		pthread_mutex_unlock(sopher->fork1);
 		pthread_mutex_unlock(sopher->fork2);
 		philo_died(sopher, i);
+		return ;
 	}
 	print_fork(sopher, i);
 	print_eat(sopher, i);
@@ -54,14 +66,19 @@ void	odd_immortal_eat(t_philo *sopher, t_start *start)
 
 void	odd_mortal_eat(t_philo *sopher, t_start *start)
 {
-	size_t	i;
+	atomic_size_t	i;
 	
 	if (sopher-> que == 0)
 	{
-		ft_putnbr_fd(sopher->name, 1);
-		ft_putstr_fd("waiting\n", 1);
+		// ft_putnbr_fd(sopher->name, 1);
+		// ft_putstr_fd("waiting\n", 1);
 		sopher->que = start->philosophers - 1;
 		usleep(1000 * (start->eat));
+	}
+	else if (sopher-> que == 1 || sopher->que == (size_t)start->philosophers - 1)
+	{
+		usleep(500);
+		sopher->que --;
 	}
 	else
 		sopher->que --;
@@ -69,7 +86,11 @@ void	odd_mortal_eat(t_philo *sopher, t_start *start)
 	// printf("locked fork 1\n");
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
+	{
+		pthread_mutex_unlock(sopher->fork1);
 		philo_died(sopher, i);
+		return ;
+	}
 	print_fork(sopher, i);
 	pthread_mutex_lock(sopher->fork2);
 	// printf("locked fork 2\n");
@@ -79,6 +100,7 @@ void	odd_mortal_eat(t_philo *sopher, t_start *start)
 		pthread_mutex_unlock(sopher->fork1);
 		pthread_mutex_unlock(sopher->fork2);
 		philo_died(sopher, i);
+		return ;
 	}
 	print_fork(sopher, i);
 	sopher->ate = i;
@@ -229,18 +251,20 @@ pthread_t	*odd_start_threads_mortal(t_philo *sopher, t_start *start)
 		args = fill(sopher + i, start);
 		if (args == NULL)
 			return (free(thread), puterror("malloc failed\n"), NULL);
+		/*
 		if (i == 0)
 		{
 			if (pthread_create(thread + i,NULL, odd_wait_mortal, args) != 0)
 				return(puterror("error thread canno't be created\n"), NULL);
 		}
-		else if(i % 2 == 0)
+		*/
+		if(i % 2 == 0)
 		{
-			if (pthread_create(thread + i,NULL, odd_eat_mortal, args) != 0)
+			if (pthread_create(thread + i,NULL, odd_think_mortal, args) != 0)
 				return(puterror("error thread canno't be created\n"), NULL);
 		}
-		else if (i % 2 == 1)
-			if (pthread_create(thread + i,NULL, odd_think_mortal, args) != 0)
+		if (i % 2 == 1)
+			if (pthread_create(thread + i,NULL, odd_eat_mortal, args) != 0)
 				return(puterror("error thread can not be created\n"), NULL);
 		i ++;
 	}
@@ -268,10 +292,10 @@ pthread_t	*odd_start_threads_immortal(t_philo *sopher, t_start *start)
 		if (args == NULL)
 			return (free(thread), puterror("malloc failed\n"), NULL);
 		if(i % 2 == 0)
-			if (pthread_create(thread + i,NULL, odd_eat_immortal, args) != 0)
+			if (pthread_create(thread + i,NULL, odd_think_immortal, args) != 0)
 				return(free(args), puterror("error thread canno't be created\n"), NULL);
 		if (i % 2 == 1)
-			if (pthread_create(thread + i,NULL, odd_think_immortal, args) != 0)
+			if (pthread_create(thread + i,NULL, odd_eat_immortal, args) != 0)
 				return(free(args), puterror("error thread can not be created\n"), NULL);
 		i ++;
 	}
@@ -293,6 +317,12 @@ void	odd_immortal(t_philo *sopher, t_start *start)
 		pthread_join(thread[i], NULL);
 		i ++;
 	}
+	i = 0;
+	while (i < start->philosophers)
+	{
+		pthread_mutex_destroy(sopher->print + i);
+		i ++;
+	}
 	free(thread);
 	free(sopher->print);
 	free(sopher);
@@ -312,6 +342,12 @@ void	odd_mortal(t_philo *sopher, t_start *start)
 	while (i <= start->philosophers)
 	{
 		pthread_join(thread[i], NULL);
+		i ++;
+	}
+	i = 0;
+	while (i < start->philosophers)
+	{
+		pthread_mutex_destroy(sopher->print + i);
 		i ++;
 	}
 	free(thread);

@@ -15,12 +15,16 @@
 
 void	even_immortal_eat(t_philo *sopher, t_start *start)
 {
-	size_t	i;
+	atomic_size_t	i;
 
 	pthread_mutex_lock(sopher->fork1);
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
+	{
+		pthread_mutex_unlock(sopher->fork1);
 		philo_died(sopher, i);
+		return ;
+	}
 	print_fork(sopher, i);
 	pthread_mutex_lock(sopher->fork2);
 	i = get_time_from_start(sopher);
@@ -29,6 +33,7 @@ void	even_immortal_eat(t_philo *sopher, t_start *start)
 		pthread_mutex_unlock(sopher->fork1);
 		pthread_mutex_unlock(sopher->fork2);
 		philo_died(sopher, i);
+		return ;
 	}
 	print_fork(sopher, i);
 	print_eat(sopher, i);
@@ -48,7 +53,7 @@ void	initialize_variables_in_thread(t_args *args, t_philo **sopher, t_start **st
 
 void	even_mortal_eat(t_philo *sopher, t_start *start)
 {
-	size_t	i;
+	atomic_size_t	i;
 
 	pthread_mutex_lock(sopher->fork1);
 	i = get_time_from_start(sopher);
@@ -78,7 +83,7 @@ void	even_mortal_eat(t_philo *sopher, t_start *start)
 
 void	philo_sleep(t_philo *sopher, t_start *start)
 {
-	size_t	i;
+	atomic_size_t	i;
 
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))
@@ -91,7 +96,7 @@ void	philo_sleep(t_philo *sopher, t_start *start)
 
 void	think(t_philo *sopher, t_start *start)
 {
-	size_t	i;
+	atomic_size_t	i;
 
 	i = get_time_from_start(sopher);
 	if (i > (start->die + sopher->ate))

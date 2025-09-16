@@ -70,7 +70,7 @@ int	initialize_mutexes(t_philo *sopher, t_start *start, pthread_mutex_t *mut)
 	return (1);
 }
 
-void	fill_philosophers(t_philo *sopher, t_start *start, int *semafor, size_t *strt, char *flag)
+void	fill_philosophers(t_philo *sopher, t_start *start, atomic_int *semafor, atomic_size_t *strt, atomic_char *flag)
 {
 	int		i;
 
@@ -89,7 +89,7 @@ void	fill_philosophers(t_philo *sopher, t_start *start, int *semafor, size_t *st
 	}
 }
 
-t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, int *semafor, size_t *strt, char *flag)
+t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, atomic_int *semafor, atomic_size_t *strt, atomic_char *flag)
 {
 	t_philo	*sopher;
 
@@ -107,9 +107,9 @@ void	initialize_simulation(t_start *start)
 {
 	t_philo	*sopher;
 	pthread_mutex_t	*mut;
-	int				semafor;
-	size_t			strt;
-	char			flag[1048];
+	atomic_int				semafor;
+	atomic_size_t			strt;
+	atomic_char			flag[1048];
 	
 	
 	ft_memset(flag, 0, 1048);

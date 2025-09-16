@@ -108,10 +108,10 @@ void	even_immortal(t_philo *sopher, t_start *start)
 }
 
 
-size_t	get_time_from_start(t_philo *sopher)
+atomic_size_t	get_time_from_start(t_philo *sopher)
 {
 	struct timeval	t;
-	size_t			i;
+	atomic_size_t			i;
 
 	gettimeofday(&t, NULL);
 	i = t.tv_sec * 1000 + t.tv_usec / 1000;
@@ -136,7 +136,7 @@ void	philo_died(t_philo *sopher, size_t time)
 void	philosophers_immortal(t_philo *sopher, t_start *start)
 {
 	int		i;
-	size_t	time;
+	atomic_size_t	time;
 
 	usleep(0);
 	*sopher->start = get_time_in_size_t();

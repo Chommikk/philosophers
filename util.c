@@ -45,6 +45,8 @@ size_t	philo_itoa(char *str, size_t num)
 	str[0] = num % 10 + '0';
 	return (i);
 }
+	atomic_size_t	i;
+	atomic_size_t	i;
 
 size_t	llutoa(char *str, unsigned long long number, size_t *start_of_string)
 {
@@ -68,7 +70,25 @@ size_t	llutoa(char *str, unsigned long long number, size_t *start_of_string)
 // /*
 int	death_check(t_philo *sopher, t_start *start)
 {
-	if (sopher->ate + start->die < get_time_from_start(sopher))
+	atomic_size_t	i;
+	// atomic_size_t	x;
+	
+	i = get_time_from_start(sopher);
+	/*
+	atomic_size_t	j;
+
+	i  = 0;
+	j  = 0;
+	if( i < j)
+	{
+
+	}
+	*/
+	// x = sopher->ate + start->die;
+	// atomic_size_t f = get_time_from_start(sopher);
+	// if (x < f)
+	if ((sopher->ate + start->die) < i)
+	// if (i < get_time_from_start(sopher))
 		return (0);
 	return (1);
 }

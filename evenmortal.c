@@ -63,7 +63,7 @@ void	*even_eat_mortal(void *args)
 
 void	*monitoring(void *args)
 {
-	char	*arr;
+	atomic_char	*arr;
 	t_philo	*sopher;
 	t_start	*start;
 	int		i;
@@ -71,6 +71,8 @@ void	*monitoring(void *args)
 	initialize_variables_in_thread(args, &sopher, &start);
 	free(args);
 	// printf("%p adress flag\n", sopher->flag);
+	while(*sopher->semafor == 0)
+		usleep(10);
 	arr = sopher->flag;
 	// printf("%p adress arr\n", arr);
 	while (1)
@@ -79,20 +81,22 @@ void	*monitoring(void *args)
 		while (i < start->philosophers)
 		{
 			//write(1,"hello",5);
-			printf("arr[%i] == %i\n", i, arr[i]);
+			// printf("arr[%i] == %i\n", i, arr[i]);
 			if (arr[i] !=0)
 				break;
 			i++;
 		}
 		if (i == start->philosophers)
 		{
+			// pthread_mutex_lock(sopher->print);
 			*sopher->semafor = 2;
+			// pthread_mutex_unlock(sopher->print);
 			return (NULL);
 		}
-		printf("%i sopher semafor\n", *sopher->semafor);
+		// printf("%i sopher semafor\n", *sopher->semafor);
 		if (*sopher->semafor == 2)
 		{
-			printf("Returned\n");
+			// printf("Returned\n");
 			return (NULL);
 		}
 		// usleep(100);
@@ -132,7 +136,7 @@ pthread_t	*even_start_threads_mortal(t_philo *sopher, t_start *start)
 void	even_mortal(t_philo *sopher, t_start *start)
 {
 	int		i;
-	size_t	time;
+	atomic_size_t	time;
 	pthread_t	*thread;
 
 	thread = even_start_threads_mortal(sopher, start);

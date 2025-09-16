@@ -20,8 +20,14 @@ void	*even_think_immortal(void *args)
 
 	initialize_variables_in_thread(args, &sopher, &start);
 	free(args);
+	pthread_mutex_lock(sopher->print);
+	printf("here think immortal\n");
+	pthread_mutex_unlock(sopher->print);
 	while(*sopher->semafor == 0)
 		usleep(10);
+	pthread_mutex_lock(sopher->print);
+	printf("here think immortal2\n");
+	pthread_mutex_unlock(sopher->print);
 	usleep(100);
 	think(sopher, start);
 	while(1)
@@ -43,8 +49,14 @@ void	*even_eat_immortal(void *args)
 	
 	initialize_variables_in_thread(args, &sopher, &start);
 	free(args);
+	pthread_mutex_lock(sopher->print);
+	printf("here eat immortal\n");
+	pthread_mutex_unlock(sopher->print);
 	while(*sopher->semafor == 0)
 		usleep(10);
+	pthread_mutex_lock(sopher->print);
+	printf("here eat immortal2\n");
+	pthread_mutex_unlock(sopher->print);
 	while(1)
 	{
 		even_immortal_eat(sopher, start);
@@ -141,7 +153,9 @@ void	philosophers_immortal(t_philo *sopher, t_start *start)
 	usleep(0);
 	*sopher->start = get_time_in_size_t();
 	// printf("sopher->start == in even_philosophers %lu\n", *sopher->start);
+	{
 	*sopher->semafor = 1;
+	}
 	while(*sopher->semafor == 1)
 	{
 		i = 0;
@@ -163,6 +177,10 @@ void	philosophers_immortal(t_philo *sopher, t_start *start)
 			}
 			i++;
 		}
+		// pthread_mutex_lock(sopher->print);
+		// printf("hehe\n");
+		// pthread_mutex_unlock(sopher->print);
+		usleep(10);
 	}
 }
 

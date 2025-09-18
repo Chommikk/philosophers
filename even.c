@@ -23,7 +23,7 @@ void	*even_think_immortal(void *args)
 	pthread_mutex_lock(sopher->print);
 	printf("here think immortal\n");
 	pthread_mutex_unlock(sopher->print);
-	while(*sopher->semafor == 0)
+	while(atomic_load(sopher->semafor) == 0)
 		usleep(10);
 	pthread_mutex_lock(sopher->print);
 	printf("here think immortal2\n");
@@ -35,7 +35,7 @@ void	*even_think_immortal(void *args)
 		even_immortal_eat(sopher, start);
 		philo_sleep(sopher, start);
 		think(sopher,start);
-		if (*sopher->semafor == 2)
+		if (atomic_load(sopher->semafor) == 2)
 			return (NULL);
 	}
 	// */
@@ -52,7 +52,7 @@ void	*even_eat_immortal(void *args)
 	pthread_mutex_lock(sopher->print);
 	printf("here eat immortal\n");
 	pthread_mutex_unlock(sopher->print);
-	while(*sopher->semafor == 0)
+	while(atomic_load(sopher->semafor) == 0)
 		usleep(10);
 	pthread_mutex_lock(sopher->print);
 	printf("here eat immortal2\n");
@@ -62,7 +62,7 @@ void	*even_eat_immortal(void *args)
 		even_immortal_eat(sopher, start);
 		philo_sleep(sopher, start);
 		think(sopher,start);
-		if (*sopher->semafor == 2)
+		if (atomic_load(sopher->semafor) == 2)
 			return (NULL);
 	}
 	return (NULL);
@@ -151,12 +151,10 @@ void	philosophers_immortal(t_philo *sopher, t_start *start)
 	atomic_size_t	time;
 
 	usleep(0);
-	*sopher->start = get_time_in_size_t();
+	atomic_store(sopher->start, get_time_in_size_t());
 	// printf("sopher->start == in even_philosophers %lu\n", *sopher->start);
-	{
-	*sopher->semafor = 1;
-	}
-	while(*sopher->semafor == 1)
+	atomic_store(sopher->semafor, 1);
+	while(atomic_load(sopher->semafor) == 1)
 	{
 		i = 0;
 		// printf("in the loop\n");

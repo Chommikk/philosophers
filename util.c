@@ -13,6 +13,22 @@
 #include "philosophers.h"
 #include "libft/libft.h"
 // /*
+
+
+void	thread_free(pthread_t	*threads, t_philo *sopher)
+{
+	size_t	i;
+
+	*sopher->flag = 2;
+	i = 0;
+	while(threads[i])
+	{
+		pthread_join(threads[i], NULL);
+		i ++;
+	}
+	free(threads);
+}
+
 t_args	*fill(t_philo *sopher, t_start *start)
 {
 	t_args	*rt;
@@ -45,8 +61,7 @@ size_t	philo_itoa(char *str, size_t num)
 	str[0] = num % 10 + '0';
 	return (i);
 }
-	atomic_size_t	i;
-	atomic_size_t	i;
+
 
 size_t	llutoa(char *str, unsigned long long number, size_t *start_of_string)
 {

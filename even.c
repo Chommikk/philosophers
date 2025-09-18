@@ -84,13 +84,13 @@ pthread_t	*even_start_threads_immortal(t_philo *sopher, t_start *start)
 	{
 		args = fill(sopher + i, start);
 		if (args == NULL)
-			return (puterror("malloc failed\n"), free(thread), NULL);
+			return (puterror("malloc failed\n"), thread_free(thread, sopher), NULL);
 		if(i % 2 == 0)
 			if (pthread_create(thread + i,NULL, even_eat_immortal, args) != 0)
-				return(puterror("error thread canno't be created\n"), free(thread), NULL);
+				return(puterror("error thread canno't be created\n"), thread_free(thread, sopher), NULL);
 		if (i % 2 == 1)
 			if (pthread_create(thread + i,NULL, even_think_immortal, args) != 0)
-				return(puterror("error thread can not be created\n"), free(thread), NULL);
+				return(puterror("error thread can not be created\n"), thread_free(thread, sopher), NULL);
 		i ++;
 	}
 	return (thread);

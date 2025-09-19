@@ -5,11 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/19 14:14:32 by mchoma            #+#    #+#             */
-/*   Updated: 2025/09/19 14:16:18 by mchoma           ###   ########.fr       */
+/*   Created: 2025/09/02 13:13:00 by mchoma            #+#    #+#             */
+/*   Updated: 2025/09/19 14:11:57 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "philosophers.h"
 #include "libft/libft.h"
 
@@ -55,16 +54,43 @@ void	*even_eat_mortal(void *args)
 	}
 }
 
-static int	last_thread(t_philo *sopher, t_start *start, pthread_t *thread)
+void	*monitoring(void *args)
 {
-	void	*args;
+	atomic_char	*arr;
+	t_philo		*sopher;
+	t_start		*start;
+	int			i;
+
+	initialize_variables_in_thread(args, &sopher, &start);
+	free(args);
+	while (*sopher->semafor == 0)
+		usleep(10);
+	arr = sopher->flag;
+	while (1)
+	{
+		i = 0;
+		while (i < start->philosophers)
+		{
+			if (arr[i] != 0)
+				break ;
+			i++;
+		}
+		if (i == start->philosophers)
+			return (atomic_store(sopher->semafor, 2), NULL);
+		if (atomic_load(sopher->semafor) == 2)
+			return (NULL);
+	}
+}
+
+static int last_thread(t_philo *sopher, t_start *start, pthread_t *thread)
+{
+	void *args;
 
 	args = fill(sopher, start);
 	if (args == NULL)
-		return (thread_free(thread, sopher), puterror("malloc failed\n"), -1);
-	if (pthread_create(thread + start->philosophers, NULL,
-			monitoring, args) != 0)
-		return (puterror("error thread can not be created\n"), -1);
+		return ( thread_free(thread, sopher), puterror("malloc failed\n"), -1);
+	if (pthread_create(thread + start->philosophers, NULL, monitoring, args) != 0)
+		return(puterror("error thread can not be created\n"), -1);
 	return (1);
 }
 
@@ -80,16 +106,13 @@ pthread_t	*even_start_threads_mortal(t_philo *sopher, t_start *start)
 	{
 		args = fill(sopher + i, start);
 		if (args == NULL)
-			return (thread_free(thread, sopher),
-				puterror("malloc failed\n"), NULL);
-		if (i % 2 == 0)
-			if (pthread_create(thread + i, NULL, even_eat_mortal, args) != 0)
-				return (puterror("error thread canno't be created\n"),
-					thread_free(thread, sopher), NULL);
+			return (thread_free(thread, sopher), puterror("malloc failed\n"), NULL);
+		if(i % 2 == 0)
+			if (pthread_create(thread + i,NULL, even_eat_mortal, args) != 0)
+				return(puterror("error thread canno't be created\n"),  thread_free(thread, sopher), NULL);
 		if (i % 2 == 1)
-			if (pthread_create(thread + i, NULL, even_think_mortal, args) != 0)
-				return (puterror("error thread can not be created\n"),
-					thread_free(thread, sopher), NULL);
+			if (pthread_create(thread + i,NULL, even_think_mortal, args) != 0)
+				return(puterror("error thread can not be created\n"),  thread_free(thread, sopher), NULL);
 		i ++;
 	}
 	if (last_thread(sopher, start, thread) == -1)
@@ -97,11 +120,12 @@ pthread_t	*even_start_threads_mortal(t_philo *sopher, t_start *start)
 	return (thread);
 }
 
+
 void	even_mortal(t_philo *sopher, t_start *start)
 {
-	int				i;
+	int		i;
 	atomic_size_t	time;
-	pthread_t		*thread;
+	pthread_t	*thread;
 
 	thread = even_start_threads_mortal(sopher, start);
 	if (thread == NULL)
@@ -115,11 +139,11 @@ void	even_mortal(t_philo *sopher, t_start *start)
 		time = get_time_from_start(sopher);
 		while (i < start->philosophers)
 		{
-			if (sopher->ate + start->die < time)
+			if(sopher->ate + start->die < time)
 				philo_died(sopher + i, time);
 			i ++;
 		}
 	}
-	return (thread_free(thread, sopher),
-		free_mutex(sopher->print, start), free(sopher), exit(0));
+	return (thread_free(thread, sopher), free_mutex(sopher->print, start), free(sopher), exit(0));
 }
+

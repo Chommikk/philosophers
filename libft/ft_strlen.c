@@ -6,7 +6,7 @@
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:29:01 by mchoma            #+#    #+#             */
-/*   Updated: 2025/04/22 15:32:08 by mchoma           ###   ########.fr       */
+/*   Updated: 2025/09/19 14:53:20 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "libft.h"
@@ -15,7 +15,7 @@ size_t	ft_strlen(const char *str)
 {
 	size_t	i;
 
-	if(!str)
+	if (!str)
 		return (0);
 	i = 0;
 	while (str[i])

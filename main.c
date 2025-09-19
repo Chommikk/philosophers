@@ -6,82 +6,30 @@
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 20:15:01 by mchoma            #+#    #+#             */
-/*   Updated: 2025/08/31 21:27:15 by mchoma           ###   ########.fr       */
+/*   Updated: 2025/09/19 13:44:45 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 #include "libft/libft.h"
 
-static void	fuck_norm(t_philo *sopher, pthread_mutex_t *mut, int i)
-{
-	if (i % 2 == 1)
-	{
-		sopher[i].fork1 = mut + i + 1;
-		sopher[i].fork2 = mut + 1;
-	}
-	else
-	{
-		sopher[i].fork1 = mut + 1;
-		sopher[i].fork2 = mut + i + 1;
-	}
-	sopher[i].print = mut;
-}
-
-void	fill_philosophers_with_mutexes(t_philo *sopher, t_start *start, pthread_mutex_t *mut)
-{
-	int	i;
-
-	i = 0;
-	while (i < start->philosophers - 1)
-	{
-		if (i % 2 == 1)
-		{
-			sopher[i].fork1 = mut + i + 1;
-			sopher[i].fork2 = mut + i + 2;
-		}
-		else
-		{
-			sopher[i].fork1 = mut + i + 2;
-			sopher[i].fork2 = mut + i + 1;
-		}
-		sopher[i].print = mut;
-		i ++;
-	}
-	fuck_norm(sopher, mut, i);
-}
-
-int	initialize_mutexes(t_philo *sopher, t_start *start, pthread_mutex_t *mut)
-{
-	int		i;
-
-	mut = ft_calloc(sizeof(pthread_mutex_t),start->philosophers + 1);
-	if (mut == NULL)
-		return (free(sopher), puterror("malloc failed\n"), 0);
-	i = 0;
-	while (i <= start->philosophers)
-	{
-		if (pthread_mutex_init(mut + i, NULL))
-			return (free(sopher), puterror("failed to create mutex\n"), 0);
-		i ++;
-	}
-	// printf("%p to be freed\n", mut);
-	fill_philosophers_with_mutexes(sopher, start, mut);
-	return (1);
-}
-
-void	fill_philosophers(t_philo *sopher, t_start *start, atomic_int *semafor, atomic_size_t *strt, atomic_char *flag)
+void	fill_philosophers(
+					t_philo *sopher,
+					t_start *start,
+					atomic_size_t *semafor,
+					atomic_char *flag
+					)
 {
 	int		i;
 
 	i = 0;
-	while(i < start->philosophers)
+	while (i < start->philosophers)
 	{
 		sopher[i].name = i + 1;
 		sopher[i].que = i;
 		sopher[i].lifetime = start->lifetime;
 		sopher[i].semafor = semafor;
-		sopher[i].start = strt;
+		sopher[i].start = semafor + 1;
 		sopher[i].ate = 0;
 		sopher[i].flag = flag + i;
 		flag[i] = 1;
@@ -89,43 +37,44 @@ void	fill_philosophers(t_philo *sopher, t_start *start, atomic_int *semafor, ato
 	}
 }
 
-t_philo	*initialize_philosophers(t_start *start, pthread_mutex_t *mut, atomic_int *semafor, atomic_size_t *strt, atomic_char *flag)
+t_philo	*initialize_philosophers(
+								t_start *start,
+								pthread_mutex_t *mut,
+								atomic_size_t *semafor,
+								atomic_char *flag
+								)
 {
 	t_philo	*sopher;
 
 	sopher = ft_calloc(sizeof(t_philo), start->philosophers + 3);
 	if (sopher == NULL)
-		return(puterror("malloc failed\n"), NULL);
+		return (puterror("malloc failed\n"), NULL);
 	if (initialize_mutexes(sopher, start, mut) == 0)
 		return (NULL);
-	fill_philosophers(sopher, start, semafor, strt, flag);
+	fill_philosophers(sopher, start, semafor, flag);
 	return (sopher);
 }
 
-
 void	initialize_simulation(t_start *start)
 {
-	t_philo	*sopher;
-	pthread_mutex_t	*mut;
-	atomic_int				semafor;
-	atomic_size_t			strt;
+	t_philo				*sopher;
+	pthread_mutex_t		*mut;
+	atomic_size_t		semafor[2];
 	atomic_char			flag[1048];
-	
-	
+
 	ft_memset(flag, 0, 1048);
 	mut = NULL;
-	semafor = 0;
-	sopher = initialize_philosophers(start, mut, &semafor, &strt, flag);
+	semafor[0] = 0;
+	sopher = initialize_philosophers(start, mut, semafor, flag);
 	if (sopher == NULL)
 		return ;
-	// printf("%p sopher->print110\n", sopher->print);
 	if (start->philosophers % 2 == 0)
+	{
 		if (start->lifetime == -1)
 			even_immortal(sopher, start);
 		else
 			even_mortal(sopher, start);
-	// else if (start->philosophers == 1)
-		// one_philosopher()
+	}
 	else
 		odd_philosophers(sopher, start);
 }
@@ -150,7 +99,7 @@ int	initialize(t_start *arg, int argc, char **argv)
 		if (arg->lifetime < 1)
 			return (puterror("Invalid argument in lifetime\n"), 0);
 	}
-	else 
+	else
 		arg->lifetime = -1;
 	return (1);
 }
@@ -163,6 +112,5 @@ int	main(int argc, char **argv)
 		return (puterror("Incorect amount of arguments\n"), 1);
 	if (initialize(&arguments, argc, argv) == 0)
 		return (0);
-
 	initialize_simulation(&arguments);
 }

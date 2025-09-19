@@ -16,7 +16,14 @@ LIBFT = libft/ft_atoi.c\
 FILES = main.c\
 		even.c\
 		odd.c\
+		oddmortal.c\
+		oddmortal2.c\
+		odd2.c\
 		util.c\
+		forks.c\
+		utils.c\
+		utils2.c\
+		utils3.c\
 		actions.c\
 		evenmortal.c\
 		$(LIBFT)

@@ -1,0 +1,104 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils2.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/19 14:47:15 by mchoma            #+#    #+#             */
+/*   Updated: 2025/09/19 14:48:50 by mchoma           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+#include "libft/libft.h"
+#include "philosophers.h"
+
+size_t	llutoa(char *str, unsigned long long number, size_t *start_of_string)
+{
+	int					counter;
+
+	counter = 12;
+	if (number == 0)
+	{
+		str[0] = '0';
+		*start_of_string = 0;
+		return (1);
+	}
+	while (number != 0)
+	{
+		str[--counter] = (number % 10) + '0';
+		number = number / 10;
+	}
+	*start_of_string = counter;
+	return (12 - counter);
+}
+
+//numbers are just for string optimatization it sais " is eating\n"
+void	print_eat(t_philo *data, size_t passed)
+{
+	size_t				len;
+	size_t				offset;
+	char				str[100];
+
+	len = llutoa(str, passed, &offset);
+	str[offset + len] = ' ';
+	len = len + philo_itoa(str + offset + len + 1, data->name);
+	*(unsigned long long *)(str + offset + len + 2) = 0x6974616520736920;
+	*(unsigned long long *)(str + offset + len + 10) = 0xa676e;
+	pthread_mutex_lock(data->print);
+	if (*data->semafor == 1)
+		write(1, str + offset, len + 13);
+	pthread_mutex_unlock(data->print);
+}
+
+//numbers are just for string optimatization it sais " is eating\n"
+void	print_fork(t_philo *data, size_t passed)
+{
+	size_t				len;
+	size_t				offset;
+	char				str[100];
+
+	len = llutoa(str, passed, &offset);
+	str[offset + len] = ' ';
+	len = len + philo_itoa(str + offset + len + 1, data->name);
+	*(unsigned long long *)(str + offset + len + 2) = 0x6b61742073616820;
+	*(unsigned long long *)(str + offset + len + 10) = 0x726f662061206e65;
+	*(unsigned long long *)(str + offset + len + 18) = 0xa6b;
+	pthread_mutex_lock(data->print);
+	if (*data->semafor == 1)
+		write(1, str + offset, len + 20);
+	pthread_mutex_unlock(data->print);
+}
+
+void	print_think(t_philo *data, size_t passed)
+{
+	size_t				len;
+	size_t				offset;
+	char				str[100];
+
+	len = llutoa(str, passed, &offset);
+	str[offset + len] = ' ';
+	len = len + philo_itoa(str + offset + len + 1, data->name);
+	*(unsigned long long *)(str + offset + len + 2) = 0x6e69687420736920;
+	*(unsigned long long *)(str + offset + len + 10) = 0xa676e696b;
+	pthread_mutex_lock(data->print);
+	if (*data->semafor == 1)
+		write(1, str + offset, len + 15);
+	pthread_mutex_unlock(data->print);
+}
+
+void	print_sleep(t_philo *data, size_t passed)
+{
+	size_t				len;
+	size_t				offset;
+	char				str[100];
+
+	len = llutoa(str, passed, &offset);
+	str[offset + len] = ' ';
+	len = len + philo_itoa(str + offset + len + 1, data->name);
+	*(unsigned long long *)(str + offset + len + 2) = 0x65656c7320736920;
+	*(unsigned long long *)(str + offset + len + 10) = 0xa676e6970;
+	pthread_mutex_lock(data->print);
+	if (*data->semafor == 1)
+		write(1, str + offset, len + 15);
+	pthread_mutex_unlock(data->print);
+}

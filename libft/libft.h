@@ -6,19 +6,19 @@
 /*   By: mchoma <mchoma@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 09:26:29 by mchoma            #+#    #+#             */
-/*   Updated: 2025/08/29 20:19:06 by mchoma           ###   ########.fr       */
+/*   Updated: 2025/09/19 14:52:59 by mchoma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdio.h>
-#include <signal.h>
-#include <string.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <limits.h>
+# include <stdio.h>
+# include <signal.h>
+# include <string.h>
 
 void	puterror(char *str);
 void	set_rt(int *rt, int num);
@@ -54,7 +54,7 @@ void	ft_putstr_fd(char *s, int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strjoinf1(char *s1, char const *s2);
 char	*ft_strmapi(char *s, char (*f)(unsigned int, char*));
-void	ft_striteri(char *s, void (*f)(unsigned int,char*));
+void	ft_striteri(char *s, void (*f)(unsigned int, char*));
 int		ft_isalnum(int str);
 int		ft_isdigit(int str);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
@@ -63,8 +63,10 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putnbr_fd(int n, int fd);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 size_t	ft_strlen(const char *str);
-// takes adress null terminated pointer to array of malloced pointers 
-// frees all pointers in array and the pointer of the master array and sets it to NULL
+// takes adress null terminated pointer 
+// to array of malloced pointers 
+// frees all pointers in array and
+// he pointer of the master array and sets it to NULL
 void	free_arr(void ***arr);
 
 #endif
